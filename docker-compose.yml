@@ -1,0 +1,14 @@
+version: '1'
+
+services:
+  filepreview:
+    image: astappev/filepreview:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      USERNAME: filepreview
+      PASSWORD: strongPassword
+      REDIS_HOST: redis
+    ports:
+      - 3000:3000

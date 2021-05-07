@@ -1,0 +1,39 @@
+{
+    "name": "@learnweb/filepreview-service",
+    "type": "module",
+    "version": "1.0.0",
+    "description": "",
+    "main": "app.js",
+    "scripts": {
+        "test": "mocha",
+        "start": "node app.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://git.l3s.uni-hannover.de/Learnweb/filepreview-service.git"
+    },
+    "keywords": [
+        "service",
+        "docker"
+    ],
+    "author": "Oleh Astappiev (https://git.l3s.uni-hannover.de/astappiev)",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://git.l3s.uni-hannover.de/Learnweb/filepreview-service/-/issues"
+    },
+    "homepage": "https://git.l3s.uni-hannover.de/Learnweb/filepreview-service",
+    "dependencies": {
+        "@learnweb/filepreview": "../filepreview",
+        "bull": "^3.22.0",
+        "config": "^1.30.0",
+        "express": "^4.17.1",
+        "express-validator": "^6.10.0",
+        "morgan": "^1.10.0",
+        "node-fetch": "^2.6.1",
+        "puppeteer": "^8.0.0",
+        "rotating-file-stream": "^2.1.5"
+    },
+    "devDependencies": {
+        "mocha": "^8.3.2"
+    }
+}

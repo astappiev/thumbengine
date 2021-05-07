@@ -1,0 +1,14 @@
+ # IDE
+.vscode
+.idea
+
+# Modules
+node_modules
+package-lock.json
+
+# Tests
+test/thumbnails/*
+
+# Logs
+*.log
+*.log.gz
