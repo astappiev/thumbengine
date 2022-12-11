@@ -1,14 +1,23 @@
-version: '1'
+version: "3.9"
 
 services:
-  filepreview:
-    image: astappev/filepreview:latest
+  thumbengine:
     build:
       context: .
       dockerfile: Dockerfile
-    environment:
-      USERNAME: filepreview
-      PASSWORD: strongPassword
-      REDIS_HOST: redis
+    cap_add:
+      - SYS_ADMIN
     ports:
-      - 3000:3000
+      - "3000:3000"
+    environment:
+      REDIS_HOST: redis
+    depends_on:
+      - redis
+    volumes:
+      - ./:/app
+    command: npm run start
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"

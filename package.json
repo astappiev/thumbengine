@@ -1,39 +1,42 @@
 {
-    "name": "@learnweb/filepreview-service",
-    "type": "module",
-    "version": "1.0.0",
-    "description": "",
-    "main": "app.js",
-    "scripts": {
-        "test": "mocha",
-        "start": "node app.js"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://git.l3s.uni-hannover.de/Learnweb/filepreview-service.git"
-    },
-    "keywords": [
-        "service",
-        "docker"
-    ],
-    "author": "Oleh Astappiev (https://git.l3s.uni-hannover.de/astappiev)",
-    "license": "ISC",
-    "bugs": {
-        "url": "https://git.l3s.uni-hannover.de/Learnweb/filepreview-service/-/issues"
-    },
-    "homepage": "https://git.l3s.uni-hannover.de/Learnweb/filepreview-service",
-    "dependencies": {
-        "@learnweb/filepreview": "../filepreview",
-        "bull": "^3.22.0",
-        "config": "^1.30.0",
-        "express": "^4.17.1",
-        "express-validator": "^6.10.0",
-        "morgan": "^1.10.0",
-        "node-fetch": "^2.6.1",
-        "puppeteer": "^8.0.0",
-        "rotating-file-stream": "^2.1.5"
-    },
-    "devDependencies": {
-        "mocha": "^8.3.2"
-    }
+  "name": "thumbengine",
+  "private": true,
+  "type": "module",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "mocha",
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:astappiev/thumbengine.git"
+  },
+  "keywords": [
+    "service",
+    "docker"
+  ],
+  "author": "Oleh Astappiev (https://github.com/astappiev)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/astappiev/thumbengine/issues"
+  },
+  "homepage": "https://github.com/astappiev/thumbengine",
+  "dependencies": {
+    "@fastify/env": "^4.2.0",
+    "send": "^0.18.0",
+    "content-disposition": "^0.5.4",
+    "bullmq": "^3.4.1",
+    "fastify": "^4.10.2",
+    "fastify-plugin": "^4.4.0",
+    "fluent-json-schema": "^4.0.0",
+    "node-fetch": "^3.3.0",
+    "pino-pretty": "^9.1.1",
+    "puppeteer": "^19.4.0",
+    "thumbnailator": "^1.1.0"
+  },
+  "devDependencies": {
+    "mocha": "^10.2.0"
+  }
 }

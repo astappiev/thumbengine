@@ -1,46 +1,53 @@
-import config from "config";
-import {Router} from "express";
-import {body, validationResult} from "express-validator";
-import {queueScreenshotJob} from "../src/queue.js";
-import {takeScreenshot} from '../src/services/screenshot.js';
-import {cleanDir, randGuid} from "../src/utils";
-
-const router = Router();
-const defaultOptions = config.get('screenshot');
+import S from 'fluent-json-schema'
 
 /**
- * Creates a screenshot of given URL.
+ * @param {import('fastify').FastifyInstance} fastify encapsulated Fastify instance
+ * @param {Object} opts plugin options, refer to https://www.fastify.io/docs/latest/Reference/Plugins/#plugin-options
  */
-router.post(
-    '/',
-    body('url').isURL().trim().notEmpty(),
-    body('callbackUrl').isURL().trim().optional(),
-    body('viewport').isObject().optional(),
-    async function (req, res) {
-        const errors = validationResult(req)
-        if (!errors.isEmpty()) {
-            return res.status(422).send({ errors: errors.array() })
-        }
+export default async function screenshot(fastify, opts) {
+    fastify.post(
+        '/',
+        {
+            schema: {
+                body: S.object()
+                    .prop('url', S.string().format('url').required())
+                    .prop('callbackUrl', S.string().format('url'))
+                    .prop('options', S.object().default({})
+                        .prop('width', S.integer().minimum(10).maximum(10000).default(1920))
+                        .prop('height', S.integer().minimum(10).maximum(10000).default(1080))
+                        .prop('format', S.string().enum(Array.of("png", "jpeg", "webp")).default("png"))
+                        .prop('quality', S.number().minimum(0).maximum(100))
+                        .prop('fullPage', S.boolean().default(false))
+                    ),
+                response: {
+                    422: S.object()
+                        .prop('status', S.string().default('failed'))
+                        .prop('error', S.string()),
+                }
+            }
+        },
+        async function (request, reply) {
+            const {url, callbackUrl, options} = request.body;
+            const jobOptions = {
+                serverUrl: `${request.protocol}://${request.hostname}/${request.url.substring(0, request.url.lastIndexOf('/'))}`,
+                callbackUrl,
+                url,
+                browserOpts: {defaultViewport: {width: options.width, height: options.height}},
+                screenshotOpts: {fullPage: options.fullPage, type: options.format, quality: options.quality}
+            };
 
-        const {url, callbackUrl, viewport} = req.body;
-        const combinedOptions = {...defaultOptions, viewport};
+            const job = await fastify.queues['puppeteer'].add('screenshot', jobOptions);
 
-        if (combinedOptions.callbackUrl) {
-            const job = await queueScreenshotJob(url, callbackUrl, combinedOptions);
-            res.send({status: 'queued', jobId: job.id});
-        } else {
-            const uuid = randGuid();
-
-            try {
-                const result = await takeScreenshot(uuid, {url, options: combinedOptions});
-                res.download(result.filePath);
-            } catch (e) {
-                res.status(422).send({status: 'failed', error: e});
-            } finally {
-                await cleanDir(uuid);
+            if (jobOptions.callbackUrl) {
+                reply.code(202).send({status: 'queued'});
+            } else {
+                try {
+                    const result = await job.waitUntilFinished(fastify.queueEvents['puppeteer'], 5000);
+                    return reply.sendFile(result.thumbPath);
+                } catch (e) {
+                    reply.code(422).send({error: e});
+                }
             }
         }
-    },
-);
-
-export default router;
+    )
+}

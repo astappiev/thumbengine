@@ -1,33 +1,84 @@
-import express from "express";
-import config from "config";
-import path from "path";
-import morgan from "morgan";
-import rfs from "rotating-file-stream";
+import {tmpdir} from "os";
+import Fastify from 'fastify'
+import FastifyEnv from "@fastify/env";
 
-import indexRouter from "./routes/index.js";
-import downloadRouter from "./routes/download.js";
-import filepreviewRouter from "./routes/filepreview.js";
-import screenshotRouter from "./routes/screenshot.js";
+import pluginDownload from "./plugins/download.js"
+import pluginQueue from "./plugins/queue.js"
 
-const appConfig = config.get('app');
-const app = express();
+import routeRoot from "./routes/root.js"
+import routeDownload from "./routes/download.js"
+import routeFilepreview from "./routes/filepreview.js"
+import routeScreenshot from "./routes/screenshot.js"
 
-// create a rotating write stream
-const accessLogStream = rfs.createStream('access.log', {
-    interval: '1d', // rotate daily
-    path: path.join('./', 'log')
-});
+const schema = {
+    type: 'object',
+    required: ['PORT'],
+    properties: {
+        PORT: {
+            type: 'string',
+            default: 3000
+        },
+        STORAGE_PATH: {
+            type: 'string',
+            default: tmpdir()
+        },
+        REDIS_HOST: {
+            type: 'string',
+            default: "127.0.0.1",
+        },
+        REDIS_PORT: {
+            type: 'string',
+            default: 6379,
+        },
+        REDIS_AUTH: {
+            type: 'string',
+        }
+    }
+};
 
-// setup the logger
-app.use(morgan('dev', { stream: accessLogStream }));
-app.use(express.json());
+(async () => {
+    const fastify = Fastify({
+        logger: {
+            "transport": {
+                "target": "pino-pretty",
+                "options": {
+                    "translateTime": "HH:MM:ss Z",
+                    "ignore": "pid,hostname"
+                }
+            }
+        },
+    });
 
-app.use('/', indexRouter);
-app.use('/download', downloadRouter);
-app.use('/filepreview', filepreviewRouter);
-app.use('/screenshot', screenshotRouter);
+    try {
+        await fastify.register(FastifyEnv, {confKey: 'config', schema});
 
-const port = appConfig.port || 3000;
-app.listen(port, () => {
-    console.log(`Filepreview Service app listening at http://localhost:${port}`)
-});
+        fastify.register(pluginDownload, {
+            root: fastify.config.STORAGE_PATH
+        });
+
+        fastify.register(pluginQueue, {
+            workersPath: 'workers/',
+            connection: {
+                host: fastify.config.REDIS_HOST,
+                port: fastify.config.REDIS_PORT,
+                // password: fastify.config.REDIS_PASSWORD,
+            },
+        });
+
+        fastify.register(routeRoot);
+        fastify.register(routeDownload, {prefix: '/download'});
+        fastify.register(routeFilepreview, {
+            prefix: '/filepreview',
+            "width": 640,
+            "background": "#fff",
+            "keepAspect": true,
+            "format": "png"
+        });
+        fastify.register(routeScreenshot, {prefix: '/screenshot'});
+
+        await fastify.listen({host: "0.0.0.0", port: fastify.config.PORT || 3000});
+    } catch (err) {
+        fastify.log.error(err);
+        process.exit(1);
+    }
+})();
