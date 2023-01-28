@@ -25,15 +25,15 @@
   "homepage": "https://github.com/astappiev/thumbengine",
   "dependencies": {
     "@fastify/env": "^4.2.0",
-    "send": "^0.18.0",
-    "content-disposition": "^0.5.4",
     "bullmq": "^3.4.1",
+    "content-disposition": "^0.5.4",
     "fastify": "^4.10.2",
     "fastify-plugin": "^4.4.0",
     "fluent-json-schema": "^4.0.0",
     "node-fetch": "^3.3.0",
     "pino-pretty": "^9.1.1",
     "puppeteer": "^19.4.0",
+    "send": "^0.18.0",
     "thumbnailator": "^1.1.0"
   },
   "devDependencies": {
