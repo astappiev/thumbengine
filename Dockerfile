@@ -15,6 +15,10 @@ RUN addgroup -S appuser && adduser -S -G appuser appuser \
     && mkdir -p /home/appuser/Downloads \
     && chown -R appuser:appuser /home/appuser
 
+# Add chrome seccomp profile, so it can be easelly used inside the container
+ADD https://raw.githubusercontent.com/jfrazelle/dotfiles/master/etc/docker/seccomp/chrome.json \
+    /home/appuser/chrome.json
+
 # Run everything after as non-privileged user.
 USER appuser
 
