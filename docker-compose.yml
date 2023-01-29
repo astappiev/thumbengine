@@ -10,6 +10,7 @@ services:
     environment:
       REDIS_HOST: redis
     security_opt:
+      # make sure to download the chrome.json file beforehand https://raw.githubusercontent.com/jfrazelle/dotfiles/master/etc/docker/seccomp/chrome.json
       - seccomp:$HOME/chrome.json
     depends_on:
       - redis
