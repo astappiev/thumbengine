@@ -42,7 +42,7 @@ export default async function screenshot(fastify, opts) {
                 reply.code(202).send({status: 'queued'});
             } else {
                 try {
-                    const result = await job.waitUntilFinished(fastify.queueEvents['puppeteer'], 5000);
+                    const result = await job.waitUntilFinished(fastify.queueEvents['puppeteer'], 10000);
                     return reply.sendFile(result.thumbPath);
                 } catch (e) {
                     reply.code(422).send({error: e});

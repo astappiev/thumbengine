@@ -6,8 +6,16 @@ import puppeteer from "puppeteer";
  */
 const puppeteerWorker = async (fastify, job) => {
     fastify.log.debug('processing job:', job.id);
-    const { serverUrl, callbackUrl, url, browserOpts, screenshotOpts } = job.data;
+    let { serverUrl, callbackUrl, url, browserOpts, screenshotOpts } = job.data;
     await fastify.createDir(job.id);
+
+    // remove a toolbar if WabArchive url requested
+    if (url.startsWith('https://web.archive.org/web/')) {
+        const url_parts = url.split('/');
+        if (url_parts.length > 5 && !url_parts[4].endsWith('_')) {
+            url = 'https://web.archive.org/web/' + url_parts[4] + 'if_/' + url_parts.slice(5).join('/');
+        }
+    }
 
     const browser = await puppeteer.launch(browserOpts);
     try {
