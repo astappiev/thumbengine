@@ -45,7 +45,7 @@ export default async function filepreview(fastify, opts) {
                 reply.code(202).send({status: 'queued'});
             } else {
                 try {
-                    const result = await job.waitUntilFinished(fastify.queueEvents['thumbnailator'], 5000);
+                    const result = await job.waitUntilFinished(fastify.queueEvents['thumbnailator'], fastify.config.JOB_TIMEOUT);
                     return reply.sendFile(result.thumbPath);
                 } catch (e) {
                     reply.code(422).send({error: e});

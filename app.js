@@ -15,19 +15,23 @@ const schema = {
     required: ['PORT'],
     properties: {
         PORT: {
-            type: 'string',
-            default: 3000
+            type: 'integer',
+            default: 3000,
         },
         STORAGE_PATH: {
             type: 'string',
-            default: tmpdir()
+            default: tmpdir(),
+        },
+        JOB_TIMEOUT: {
+            type: 'integer',
+            default: 30_000,
         },
         REDIS_HOST: {
             type: 'string',
             default: "127.0.0.1",
         },
         REDIS_PORT: {
-            type: 'string',
+            type: 'integer',
             default: 6379,
         },
         REDIS_AUTH: {
