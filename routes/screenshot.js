@@ -15,8 +15,8 @@ export default async function screenshot(fastify, opts) {
                     .prop('options', S.object().default({})
                         .prop('width', S.integer().minimum(10).maximum(10000).default(1920))
                         .prop('height', S.integer().minimum(10).maximum(10000).default(1080))
-                        .prop('format', S.string().enum(Array.of("png", "jpeg", "webp")).default("png"))
-                        .prop('quality', S.number().minimum(0).maximum(100))
+                        .prop('format', S.string().enum(Array.of("png", "jpeg", "webp")).default("jpeg"))
+                        .prop('quality', S.number().minimum(0).maximum(100).default(90))
                         .prop('fullPage', S.boolean().default(false))
                     ),
                 response: {

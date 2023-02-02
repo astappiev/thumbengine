@@ -71,14 +71,7 @@ const schema = {
 
         fastify.register(routeRoot);
         fastify.register(routeDownload, {prefix: '/download'});
-        fastify.register(routeFilepreview, {
-            prefix: '/filepreview',
-            "width": 640,
-            "density": 300,
-            "thumbnail": true,
-            "background": "#fff",
-            "format": "jpeg"
-        });
+        fastify.register(routeFilepreview, {prefix: '/filepreview'});
         fastify.register(routeScreenshot, {prefix: '/screenshot'});
 
         await fastify.listen({host: "0.0.0.0", port: fastify.config.PORT || 3000});
