@@ -25,8 +25,8 @@ The payload has to be valid json, whereby the `downloadUrl` is mandatory and the
 Valid option values are:
 -   `width`, `height`: integer (pixel). The target image width and/or height
 -   `scale`: integer (percent). An alternative to `width` and `height`, the image will be scaled to the given percentage
--   `format`: [png, jpeg (default), webp]
--   `quality`: 0-100 (used for jpeg, default 90)
+-   `format`: [png, jpg (default), webp]
+-   `quality`: 0-100 (used for jpg, default 90)
 -   `crop`: boolean, default `false` is whether to crop the image to the given dimensions
 -   `ignoreAspect`: boolean, default `false` is whether to keep the aspect ratio of the original document
 -   `oversize`: boolean, default `false` is whether to use the given dimensions as minimum values
@@ -71,8 +71,8 @@ POST /screenshot
 
 Valid option values are:
 -   `width`, `height`: integer (pixel). The default `width` is 1920, the height is 1080
--   `format`: [png, jpeg (default), webp]
--   `quality`: 0-100 (used for jpeg, default 90)
+-   `format`: [png, jpg (default), webp]
+-   `quality`: 0-100 (used for jpg, default 90)
 -   `fullPage`: boolean, default `false` is whether to take a screenshot of the full scrollable page
 
 

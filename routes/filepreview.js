@@ -16,7 +16,7 @@ export default async function filepreview(fastify, opts) {
                         .prop('width', S.integer().minimum(10).maximum(10000))
                         .prop('height', S.integer().minimum(10).maximum(10000))
                         .prop('scale', S.integer().minimum(0).maximum(10000))
-                        .prop('format', S.string().enum(Array.of("png", "jpeg", "webp")).default("jpeg"))
+                        .prop('format', S.string().enum(Array.of("png", "jpg", "webp")).default("jpg"))
                         .prop('crop', S.boolean().default(false))
                         .prop('ignoreAspect', S.boolean().default(false))
                         .prop('oversize', S.boolean().default(false))

@@ -15,7 +15,7 @@ export default async function screenshot(fastify, opts) {
                     .prop('options', S.object().default({})
                         .prop('width', S.integer().minimum(10).maximum(10000).default(1920))
                         .prop('height', S.integer().minimum(10).maximum(10000).default(1080))
-                        .prop('format', S.string().enum(Array.of("png", "jpeg", "webp")).default("jpeg"))
+                        .prop('format', S.string().enum(Array.of("png", "jpg", "webp")).default("jpg"))
                         .prop('quality', S.number().minimum(0).maximum(100).default(90))
                         .prop('fullPage', S.boolean().default(false))
                     ),
@@ -28,6 +28,7 @@ export default async function screenshot(fastify, opts) {
         },
         async function (request, reply) {
             const {url, callbackUrl, options} = request.body;
+            if (options.format === 'jpg') options.format = 'jpeg'; // puppeteer uses 'jpeg' instead of 'jpg'
             const jobOptions = {
                 serverUrl: `${request.protocol}://${request.hostname}/${request.url.substring(0, request.url.lastIndexOf('/'))}`,
                 callbackUrl,
