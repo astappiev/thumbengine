@@ -24,10 +24,14 @@ The payload has to be valid json, whereby the `downloadUrl` is mandatory and the
 
 Valid option values are:
 -   `width`, `height`: integer (pixel). The default `width` is 640, the height is `auto`
+-   `scale`: integer (percent). An alternative to `width` and `height`, the image will be scaled to the given percentage
 -   `format`: [png (default), jpg, webp]
 -   `quality`: 0-100 (used for jpeg)
 -   `crop`: boolean, default `false` is whether to crop the image to the given dimensions
 -   `ignoreAspect`: boolean, default `false` is whether to keep the aspect ratio of the original document
+-   `oversize`: boolean, default `false` is whether to use the given dimensions as minimum values
+-   `shrink`: boolean, default `false` is whether to shrink the image if it is larger than the target size
+-   `enlarge`: boolean, default `false` is whether to enlarge the image if it is smaller than the target size
 -   `thumbnail`: boolean, default `false` is whether to use the fastest possible way to create the thumbnail
 -   `background`: default `#ffffff` (white) is the background color of the image if transparent
 

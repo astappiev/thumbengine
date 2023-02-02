@@ -74,6 +74,8 @@ const schema = {
         fastify.register(routeFilepreview, {
             prefix: '/filepreview',
             "width": 640,
+            "density": 300,
+            "thumbnail": true,
             "background": "#fff",
             "format": "jpeg"
         });
