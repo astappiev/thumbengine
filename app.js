@@ -75,8 +75,7 @@ const schema = {
             prefix: '/filepreview',
             "width": 640,
             "background": "#fff",
-            "keepAspect": true,
-            "format": "png"
+            "format": "jpeg"
         });
         fastify.register(routeScreenshot, {prefix: '/screenshot'});
 

@@ -27,7 +27,7 @@ Valid option values are:
 -   `format`: [png (default), jpg, webp]
 -   `quality`: 0-100 (used for jpeg)
 -   `crop`: boolean, default `false` is whether to crop the image to the given dimensions
--   `keepAspect`: boolean, default `true` is whether to keep the aspect ratio of the original document
+-   `ignoreAspect`: boolean, default `false` is whether to keep the aspect ratio of the original document
 -   `thumbnail`: boolean, default `false` is whether to use the fastest possible way to create the thumbnail
 -   `background`: default `#ffffff` (white) is the background color of the image if transparent
 
