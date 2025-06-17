@@ -12,7 +12,6 @@ import routeScreenshot from "./routes/screenshot.js"
 
 const schema = {
     type: 'object',
-    required: ['PORT'],
     properties: {
         PORT: {
             type: 'integer',

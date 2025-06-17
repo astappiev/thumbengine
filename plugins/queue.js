@@ -46,15 +46,15 @@ export default fp(async (fastify, opts) => {
             ...(eventsConfig && eventsConfig),
         });
 
-        queueEvents[queueName].on('completed', async ({ jobId, result }) => {
+        queueEvents[queueName].on('completed', async ({ jobId, returnvalue }) => {
             try {
-                if (result.callbackUrl) {
-                    await fetch(result.callbackUrl, {
+                if (returnvalue && returnvalue.callbackUrl) {
+                    await fetch(returnvalue.callbackUrl, {
                         method: 'PATCH',
                         headers: {'Content-Type': 'application/json'},
                         body: JSON.stringify({
                             status: 'ok',
-                            thumbnail: await fastify.resolveStaticUrl(result.serverUrl, result.thumbPath),
+                            thumbnail: await fastify.resolveStaticUrl(returnvalue.serverUrl, returnvalue.thumbPath),
                         })
                     });
                 }
@@ -63,10 +63,10 @@ export default fp(async (fastify, opts) => {
             }
         });
 
-        queueEvents[queueName].on('failed', async ({ jobId, err }) => {
+        queueEvents[queueName].on('failed', async ({ jobId, failedReason }) => {
             try {
                 const job = await Job.fromId(queues[queueName], jobId);
-                fastify.log.error(`failed job ${jobId}: ${err}`);
+                fastify.log.error(`failed job ${jobId}: ${failedReason}`);
 
                 if (job.data && job.data.callbackUrl) {
                     await fetch(job.data.callbackUrl, {
@@ -74,7 +74,7 @@ export default fp(async (fastify, opts) => {
                         headers: {'Content-Type': 'application/json'},
                         body: JSON.stringify({
                             status: 'failed',
-                            error: err
+                            error: failedReason
                         })
                     });
                 }
