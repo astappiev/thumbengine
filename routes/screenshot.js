@@ -32,7 +32,7 @@ export default async function screenshot(fastify, opts) {
             if (options.format === 'jpg') options.format = 'jpeg'; // puppeteer uses 'jpeg' instead of 'jpg'
 
             const jobOptions = {
-                serverUrl: getServerUrl(request),
+                serverUrl: getServerUrl(fastify, request),
                 callbackUrl,
                 url,
                 browserOpts: {defaultViewport: {width: options.width, height: options.height}},

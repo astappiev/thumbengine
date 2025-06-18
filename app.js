@@ -21,6 +21,9 @@ const schema = {
             type: 'integer',
             default: 3000,
         },
+        SERVER_URL: {
+            type: 'string',
+        },
         STORAGE_PATH: {
             type: 'string',
             default: tmpdir(),

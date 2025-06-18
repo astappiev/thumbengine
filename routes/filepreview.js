@@ -38,7 +38,7 @@ export default async function filepreview(fastify, opts) {
         async function (request, reply) {
             const {downloadUrl, callbackUrl, options} = request.body;
             const jobOptions = {
-                serverUrl: getServerUrl(request),
+                serverUrl: getServerUrl(fastify, request),
                 callbackUrl,
                 downloadUrl,
                 options
