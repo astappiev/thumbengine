@@ -26,7 +26,15 @@ const schema = {
         },
         STORAGE_PATH: {
             type: 'string',
-            default: tmpdir(),
+            default: tmpdir() + '/thumbengine',
+        },
+        CLEANUP_INTERVAL: {
+            type: 'integer',
+            default: 15 * 60 * 1000, // 15 minutes
+        },
+        CLEANUP_AFTER: {
+            type: 'integer',
+            default: 60 * 60 * 1000, // 1 hour
         },
         JOB_TIMEOUT: {
             type: 'integer',
@@ -63,7 +71,9 @@ const schema = {
         await fastify.register(FastifyEnv, {confKey: 'config', schema});
 
         fastify.register(pluginDownload, {
-            root: fastify.config.STORAGE_PATH
+            root: fastify.config.STORAGE_PATH,
+            cleanupAfter: fastify.config.CLEANUP_AFTER,
+            cleanupInterval: fastify.config.CLEANUP_INTERVAL,
         });
 
         fastify.register(pluginQueue, {

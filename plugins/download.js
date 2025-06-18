@@ -13,6 +13,8 @@ export default fp(async (fastify, opts) => {
         throw new TypeError('The `setHeaders` option must be a function')
     }
 
+    const cleanupAfter = opts.cleanupAfter || 60 * 60 * 1000; // fallback to 1 hour
+    const cleanupInterval = opts.cleanupInterval || 60 * 60 * 1000; // fallback to 1 hour
     const sendOptions = {
         root: opts.root,
         acceptRanges: opts.acceptRanges,
@@ -24,6 +26,8 @@ export default fp(async (fastify, opts) => {
         lastModified: opts.lastModified,
         maxAge: opts.maxAge
     }
+
+    await fs.mkdir(sendOptions.root, {recursive: true});
 
     function pumpSendToReply(request, reply, pathname, pumpOptions = {}) {
         const options = Object.assign({}, sendOptions, pumpOptions)
@@ -129,5 +133,35 @@ export default fp(async (fastify, opts) => {
     fastify.decorate('resolveStaticUrl', async function (serverUrl, filePath) {
         const checksum = await fileChecksum(filePath);
         return serverUrl + '/download/' + filePath.substring(opts.root.length + 1) + '?sign=' + checksum;
+    });
+
+    async function cleanup() {
+        const cutoff = Date.now() - cleanupAfter;
+        try {
+            const child = await fs.readdir(opts.root);
+            for (const dir of child) {
+                const dirPath = path.join(opts.root, dir);
+                try {
+                    const stats = await fs.stat(dirPath);
+                    if (stats.mtime.getTime() < cutoff) {
+                        await fs.rm(dirPath, {recursive: true, force: true});
+                        fastify.log.info(`Removed directory: ${dirPath}`);
+                    }
+                } catch (err) {
+                    fastify.log.warn(`Could not process ${dirPath} for cleanup: ${err.message}`);
+                }
+            }
+        } catch (err) {
+            fastify.log.error(`Error during temp file cleanup: ${err.message}`);
+        }
+    }
+
+    // Run cleanup on startup and on an interval
+    cleanup();
+    const cleanupIntervalId = setInterval(cleanup, cleanupInterval);
+
+    fastify.addHook('onClose', (instance, done) => {
+        clearInterval(cleanupIntervalId);
+        done();
     });
 })
