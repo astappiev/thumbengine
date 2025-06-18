@@ -7,6 +7,7 @@ services:
       - "${HTTP_PORT:-80}:3000"
     environment:
       REDIS_HOST: redis
+      SERVER_URL: ${SERVER_URL}
     security_opt:
       # make sure to download the chrome.json file beforehand https://raw.githubusercontent.com/jfrazelle/dotfiles/master/etc/docker/seccomp/chrome.json
       - seccomp:./chrome.json

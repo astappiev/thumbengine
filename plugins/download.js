@@ -128,6 +128,6 @@ export default fp(async (fastify, opts) => {
 
     fastify.decorate('resolveStaticUrl', async function (serverUrl, filePath) {
         const checksum = await fileChecksum(filePath);
-        return serverUrl + 'download/' + filePath.substring(opts.root.length + 1) + '?sign=' + checksum;
+        return serverUrl + '/download/' + filePath.substring(opts.root.length + 1) + '?sign=' + checksum;
     });
 })
