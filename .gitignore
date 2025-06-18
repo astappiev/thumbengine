@@ -11,3 +11,6 @@ test/thumbnails/*
 # Logs
 *.log
 *.log.gz
+
+chrome.json
+.env
