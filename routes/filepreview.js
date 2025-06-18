@@ -1,4 +1,5 @@
 import S from "fluent-json-schema";
+import {getServerUrl} from "../utils/url.js";
 
 /**
  * @param {import('fastify').FastifyInstance} fastify encapsulated fastify instance
@@ -37,7 +38,7 @@ export default async function filepreview(fastify, opts) {
         async function (request, reply) {
             const {downloadUrl, callbackUrl, options} = request.body;
             const jobOptions = {
-                serverUrl: `${request.protocol}://${request.hostname}/${request.url.substring(0, request.url.lastIndexOf('/'))}`,
+                serverUrl: getServerUrl(request),
                 callbackUrl,
                 downloadUrl,
                 options

@@ -1,4 +1,5 @@
 import S from 'fluent-json-schema'
+import {getServerUrl} from "../utils/url.js";
 
 /**
  * @param {import('fastify').FastifyInstance} fastify encapsulated Fastify instance
@@ -29,8 +30,9 @@ export default async function screenshot(fastify, opts) {
         async function (request, reply) {
             const {url, callbackUrl, options} = request.body;
             if (options.format === 'jpg') options.format = 'jpeg'; // puppeteer uses 'jpeg' instead of 'jpg'
+
             const jobOptions = {
-                serverUrl: `${request.protocol}://${request.hostname}/${request.url.substring(0, request.url.lastIndexOf('/'))}`,
+                serverUrl: getServerUrl(request),
                 callbackUrl,
                 url,
                 browserOpts: {defaultViewport: {width: options.width, height: options.height}},
