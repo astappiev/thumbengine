@@ -1,5 +1,6 @@
 import crypto from "crypto";
 import fsPromises from "fs/promises";
+import { fetch } from 'undici'
 import {createReadStream, createWriteStream} from "fs";
 
 export async function fileChecksum(filePath) {

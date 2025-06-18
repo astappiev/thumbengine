@@ -1,14 +1,18 @@
 import {tmpdir} from "os";
 import Fastify from 'fastify'
 import FastifyEnv from "@fastify/env";
+import { setGlobalDispatcher, EnvHttpProxyAgent } from 'undici'
 
 import pluginDownload from "./plugins/download.js"
 import pluginQueue from "./plugins/queue.js"
 
 import routeRoot from "./routes/root.js"
 import routeDownload from "./routes/download.js"
-import routeFilepreview from "./routes/filepreview.js"
+import routeFilePreview from "./routes/filepreview.js"
 import routeScreenshot from "./routes/screenshot.js"
+
+const envHttpProxyAgent = new EnvHttpProxyAgent()
+setGlobalDispatcher(envHttpProxyAgent)
 
 const schema = {
     type: 'object',
@@ -70,7 +74,7 @@ const schema = {
 
         fastify.register(routeRoot);
         fastify.register(routeDownload, {prefix: '/download'});
-        fastify.register(routeFilepreview, {prefix: '/filepreview'});
+        fastify.register(routeFilePreview, {prefix: '/filepreview'});
         fastify.register(routeScreenshot, {prefix: '/screenshot'});
 
         await fastify.listen({host: "0.0.0.0", port: fastify.config.PORT || 3000});

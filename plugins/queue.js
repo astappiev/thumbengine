@@ -1,6 +1,7 @@
 import path from "path";
 import fp from "fastify-plugin";
 import { opendirSync } from "fs";
+import { fetch } from 'undici'
 import {Queue, QueueEvents, Worker, Job} from 'bullmq';
 
 export default fp(async (fastify, opts) => {
