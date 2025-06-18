@@ -11,18 +11,16 @@ ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
 RUN apk add --no-cache ffmpeg libreoffice graphicsmagick ghostscript
 
 # Add user so we don't need --no-sandbox.
-RUN addgroup -S appuser && adduser -S -G appuser appuser \
-    && mkdir -p /home/appuser/Downloads \
-    && chown -R appuser:appuser /home/appuser
+RUN addgroup -S thumbuser && adduser -S -G thumbuser thumbuser \
+    && mkdir -p /app && chown -R thumbuser:thumbuser /app
 
 # Run everything after as non-privileged user.
-USER appuser
+USER thumbuser
 
 # Copy files and grap dependency
 WORKDIR /app
-COPY --chown=appuser . .
+COPY --chown=thumbuser . .
 RUN ["npm", "install", "--production"]
-EXPOSE 3000
 
-# Start the app
-CMD npm run start
+EXPOSE 3000
+CMD ["npm", "start"]
