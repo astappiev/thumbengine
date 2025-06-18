@@ -17,6 +17,15 @@ const puppeteerWorker = async (fastify, job) => {
         }
     }
 
+    const proxyServer = process.env.HTTP_PROXY || process.env.HTTPS_PROXY;
+    const proxyBypass = process.env.NO_PROXY;
+    if (proxyServer) {
+        browserOpts.args = [
+            `--proxy-server=${proxyServer}`,
+            `--proxy-bypass-list=${proxyBypass || 'localhost'}`,
+        ]
+    }
+
     const browser = await puppeteer.launch(browserOpts);
     try {
         const page = await browser.newPage();
