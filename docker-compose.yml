@@ -9,8 +9,10 @@ services:
       REDIS_HOST: redis
     security_opt:
       # make sure to download the chrome.json file beforehand https://raw.githubusercontent.com/jfrazelle/dotfiles/master/etc/docker/seccomp/chrome.json
-      # or tun with --cap-add=SYS_ADMIN instead of seccomp
       - seccomp:./chrome.json
+    # alternatively to seccomp you can use --cap-add=SYS_ADMIN
+    # cap_add:
+    #   - SYS_ADMIN
     depends_on:
       - redis
     restart: unless-stopped
