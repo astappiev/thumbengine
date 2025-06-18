@@ -19,8 +19,11 @@ USER thumbuser
 
 # Copy files and grap dependency
 WORKDIR /app
-COPY --chown=thumbuser . .
+COPY --chown=thumbuser package.json package-lock.json ./
 RUN ["npm", "install", "--production"]
+
+# Copy the rest of the application code
+COPY --chown=thumbuser . .
 
 EXPOSE 3000
 CMD ["npm", "start"]
