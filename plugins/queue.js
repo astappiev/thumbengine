@@ -2,7 +2,6 @@ import path from "path";
 import fp from "fastify-plugin";
 import { opendirSync } from "fs";
 import {Queue, QueueEvents, Worker, Job} from 'bullmq';
-import fetch from "node-fetch";
 
 export default fp(async (fastify, opts) => {
     const queues = {};

@@ -1,7 +1,6 @@
 import crypto from "crypto";
 import fsPromises from "fs/promises";
 import {createReadStream, createWriteStream} from "fs";
-import fetch from "node-fetch";
 
 export async function fileChecksum(filePath) {
     const stat = await fsPromises.stat(filePath);
