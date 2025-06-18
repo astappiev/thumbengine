@@ -1,15 +1,15 @@
 import path from "path";
 import fp from "fastify-plugin";
-import { opendirSync } from "fs";
 import { fetch } from 'undici'
 import {Queue, QueueEvents, Worker, Job} from 'bullmq';
+import fs from "fs/promises";
 
 export default fp(async (fastify, opts) => {
     const queues = {};
     const workers = {};
     const queueEvents = {};
 
-    const files = opendirSync(opts.workersPath);
+    const files = await fs.opendir(opts.workersPath);
 
     for await (const filePath of files) {
         const queueName = path.parse(filePath.name).name;

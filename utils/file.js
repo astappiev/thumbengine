@@ -1,10 +1,10 @@
 import crypto from "crypto";
-import fsPromises from "fs/promises";
+import fs from "fs/promises";
+import {createReadStream} from "fs";
 import { fetch } from 'undici'
-import {createReadStream, createWriteStream} from "fs";
 
 export async function fileChecksum(filePath) {
-    const stat = await fsPromises.stat(filePath);
+    const stat = await fs.stat(filePath);
     if (!stat.isFile()) throw new Error('File not found');
 
     const hash = crypto.createHash('sha256');
@@ -23,12 +23,5 @@ export async function fileChecksum(filePath) {
 
 export async function download(remoteUrl, storePath) {
     const res = await fetch(remoteUrl);
-
-    const fileStream = createWriteStream(storePath);
-    await new Promise((resolve, reject) => {
-        res.body.pipe(fileStream);
-        res.body.on("error", reject);
-        fileStream.on('error', reject);
-        fileStream.on("finish", resolve);
-    });
+    return await fs.writeFile(storePath, res.body);
 }
