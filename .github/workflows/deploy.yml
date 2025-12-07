@@ -1,0 +1,29 @@
+name: deploy
+
+on:
+  workflow_run:
+    workflows: ["publish"]
+    types:
+      - completed
+
+jobs:
+  deploy:
+    name: deploy image
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USERNAME }}
+          key: ${{ secrets.DEPLOY_PRIVATE_KEY }}
+          fingerprint: ${{ secrets.DEPLOY_PUBLIC_KEY }}
+          proxy_host: ${{ secrets.DEPLOY_JUMP_HOST }}
+          proxy_username: ${{ secrets.DEPLOY_JUMP_USERNAME }}
+          proxy_key: ${{ secrets.DEPLOY_PRIVATE_KEY }}
+          proxy_fingerprint: ${{ secrets.DEPLOY_JUMP_PUBLIC_KEY }}
+          script: |
+            cd ${{ secrets.DEPLOY_PATH }}
+            docker compose pull
+            docker compose up -d
+
