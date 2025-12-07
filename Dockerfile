@@ -18,4 +18,4 @@ RUN ["npm", "install", "--production"]
 COPY --chown=$PPTRUSER_UID . .
 
 EXPOSE 3000
-CMD ["npm", "start"]
+ENTRYPOINT ["npm", "start"]

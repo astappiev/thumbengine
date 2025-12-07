@@ -1,0 +1,24 @@
+services:
+  thumbengine:
+    # image: ghcr.io/astappiev/thumbengine:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      REDIS_HOST: redis
+      SERVER_URL: ${SERVER_URL}
+    # make sure to download the chrome.json file beforehand https://raw.githubusercontent.com/jfrazelle/dotfiles/master/etc/docker/seccomp/chrome.json
+    # security_opt:
+    #   - seccomp:./chrome.json
+    # alternatively to seccomp you can use --cap-add=SYS_ADMIN
+    cap_add:
+      - SYS_ADMIN
+    depends_on:
+      - redis
+    ports:
+      - "3000:3000"
+
+  redis:
+    image: redis:alpine
+    restart: unless-stopped
