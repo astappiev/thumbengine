@@ -30,6 +30,7 @@ export default async function screenshot(fastify, opts) {
         async function (request, reply) {
             const {url, callbackUrl, options} = request.body;
             if (options.format === 'jpg') options.format = 'jpeg'; // puppeteer uses 'jpeg' instead of 'jpg'
+            if (url.endsWith('.pdf')) return reply.code(422).send({error: 'The endpoint does not support PDF files, please use /filepreview instead.'});
 
             const jobOptions = {
                 serverUrl: getServerUrl(fastify, request),
