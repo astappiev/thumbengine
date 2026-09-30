@@ -1,4 +1,5 @@
 import path from "path";
+import {pathToFileURL} from "url";
 import fp from "fastify-plugin";
 import { fetch } from 'undici'
 import {Queue, QueueEvents, Worker, Job} from 'bullmq';
@@ -19,7 +20,7 @@ export default fp(async (fastify, opts) => {
             queueConfig,
             workerConfig,
             eventsConfig,
-        } = await import(path.resolve(opts.workersPath, filePath.name));
+        } = await import(pathToFileURL(path.resolve(opts.workersPath, filePath.name)).href);
 
         queues[queueName] = new Queue(queueName, {
             connection: opts.connection,
