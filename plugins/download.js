@@ -2,7 +2,7 @@ import send from "send";
 import path from "path";
 import fp from "fastify-plugin";
 import {PassThrough} from "stream";
-import contentDisposition from "content-disposition";
+import {create as contentDisposition} from "content-disposition";
 import {fileChecksum} from "../utils/file.js";
 import fs from "fs/promises";
 
@@ -13,10 +13,12 @@ export default fp(async (fastify, opts) => {
         throw new TypeError('The `setHeaders` option must be a function')
     }
 
+    // normalize, so the root matches paths built with path.resolve (e.g., mixed separators on Windows)
+    const root = path.resolve(opts.root);
     const cleanupAfter = opts.cleanupAfter || 60 * 60 * 1000; // fallback to 1 hour
     const cleanupInterval = opts.cleanupInterval || 60 * 60 * 1000; // fallback to 1 hour
     const sendOptions = {
-        root: opts.root,
+        root: root,
         acceptRanges: opts.acceptRanges,
         cacheControl: opts.cacheControl,
         dotfiles: opts.dotfiles,
@@ -27,7 +29,13 @@ export default fp(async (fastify, opts) => {
         maxAge: opts.maxAge
     }
 
-    await fs.mkdir(sendOptions.root, {recursive: true});
+    await fs.mkdir(root, {recursive: true});
+
+    // converts an absolute path inside the root to a relative, URL-style path
+    function relativeToRoot(filePath) {
+        if (!path.isAbsolute(filePath)) return filePath;
+        return path.relative(root, filePath).split(path.sep).join('/');
+    }
 
     function pumpSendToReply(request, reply, pathname, pumpOptions = {}) {
         const options = Object.assign({}, sendOptions, pumpOptions)
@@ -93,21 +101,17 @@ export default fp(async (fastify, opts) => {
     }
 
     fastify.decorateReply('sendFile', function (filePath, options) {
-        if (filePath.startsWith(opts.root)) {
-            filePath = filePath.substring(opts.root.length + 1);
-        }
+        filePath = relativeToRoot(filePath);
 
         pumpSendToReply(this.request, this, filePath, options);
         return this;
     });
 
     fastify.decorateReply('download', function (filePath, fileName, options = {}) {
-        if (filePath.startsWith(opts.root)) {
-            filePath = filePath.substring(opts.root.length + 1);
-        }
+        filePath = relativeToRoot(filePath);
 
         options = typeof fileName === 'object' ? fileName : options;
-        fileName = typeof fileName === 'string' ? fileName : filePath;
+        fileName = typeof fileName === 'string' ? fileName : path.basename(filePath);
 
         // Set content disposition header
         this.header('Content-Disposition', contentDisposition(fileName));
@@ -116,7 +120,7 @@ export default fp(async (fastify, opts) => {
     });
 
     fastify.decorate('createDir', async function (jobId) {
-        const folder = path.resolve(opts.root, jobId);
+        const folder = path.resolve(root, jobId);
         try {
             await fs.access(folder); // throws if folder doesn't exist
             await fs.rm(folder, {recursive: true});
@@ -127,20 +131,20 @@ export default fp(async (fastify, opts) => {
     });
 
     fastify.decorate('resolveStaticFile', function (jobId, filename) {
-        return path.resolve(opts.root, jobId, filename);
+        return path.resolve(root, jobId, filename);
     });
 
     fastify.decorate('resolveStaticUrl', async function (serverUrl, filePath) {
         const checksum = await fileChecksum(filePath);
-        return serverUrl + '/download/' + filePath.substring(opts.root.length + 1) + '?sign=' + checksum;
+        return serverUrl + '/download/' + relativeToRoot(filePath) + '?sign=' + checksum;
     });
 
     async function cleanup() {
         const cutoff = Date.now() - cleanupAfter;
         try {
-            const child = await fs.readdir(opts.root);
+            const child = await fs.readdir(root);
             for (const dir of child) {
-                const dirPath = path.join(opts.root, dir);
+                const dirPath = path.join(root, dir);
                 try {
                     const stats = await fs.stat(dirPath);
                     if (stats.mtime.getTime() < cutoff) {
