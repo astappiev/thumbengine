@@ -34,6 +34,8 @@ Valid option values are:
 -   `enlarge`: boolean, default `false` is whether to enlarge the image if it is smaller than the target size
 -   `thumbnail`: boolean, default `false` is whether to use the fastest possible way to create the thumbnail
 -   `background`: default `#ffffff` (white) is the background color of the image if transparent
+-   `page`: integer, default `0` is the page of a multi-page document to render, starting at 0
+-   `progressive`: boolean, default `false` is whether to create a progressive (interlaced) image
 
 The `callbackUrl` is optional, if not specified, the service will wait for the result and send it to response immediately.
 

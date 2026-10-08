@@ -27,6 +27,8 @@ export default async function filepreview(fastify, opts) {
                         .prop('quality', S.number().minimum(0).maximum(100).default(90))
                         .prop('density', S.number().minimum(0).maximum(1000).default(300))
                         .prop('background', S.string().default("#ffffff"))
+                        .prop('page', S.integer().minimum(0).default(0))
+                        .prop('progressive', S.boolean().default(false))
                     ),
                 response: {
                     422: S.object()

@@ -40,6 +40,10 @@ const schema = {
             type: 'integer',
             default: 30_000,
         },
+        PROCESS_TIMEOUT: {
+            type: 'integer',
+            default: 120_000, // time limit of each conversion command (LibreOffice, GraphicsMagick, FFmpeg), 0 to disable
+        },
         REDIS_HOST: {
             type: 'string',
             default: "127.0.0.1",
